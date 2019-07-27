@@ -74,6 +74,20 @@ type Msg
 
 
 
+-- Todo implement storage
+-- updateWithStorage : Msg -> CharacterModel -> ( CharacterModel, Cmd Msg )
+-- updateWithStorage msg characterModel =
+--     let
+--         ( newModel, commands ) =
+--             update msg CharacterModel
+--         parsedModel =
+--             { newModel | abilityScore = parseAbilityScores newModel.abilityScore }
+--     in
+--     ( newModel
+--     , Cmd.batch [ commands, storeCharacter parsedModel ]
+--     )
+
+
 update : Msg -> CharacterModel -> CharacterModel
 update msg model =
     case msg of

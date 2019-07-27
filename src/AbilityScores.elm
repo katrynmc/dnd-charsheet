@@ -14,6 +14,16 @@ type AbilityScore
 
 
 
+-- type alias PersistedAbilityScore =
+--     { strengthBase : Int
+--     , dexBase : Int
+--     , constBase : Int
+--     , intBase : Int
+--     , wisBase : Int
+--     , charBase : Int
+--     }
+
+
 getAbilityScore : AbilityScore -> Int
 getAbilityScore abilityScore =
     case abilityScore of
@@ -78,6 +88,37 @@ getAbilityModifier abilityScore =
 
         CharBase val ->
             0
+
+
+
+-- Todo implement parsing and persistance
+-- defaultAbilityScore : PersistedAbilityScore
+-- defaultAbilityScore =
+--     { strengthBase = 0
+--     , dexBase = 0
+--     , constBase = 0
+--     , intBase = 0
+--     , wisBase = 0
+--     , charBase = 0
+--     }
+-- parseAbilityScores : List AbilityScore -> PersistedAbilityScore
+-- parseAbilityScores abilityScores =
+--     List.foldl buildPersistedScore defaultAbilityScore abilityScores
+-- buildPersistedScore : AbilityScore -> PersistedAbilityScore -> PersistedAbilityScore
+-- buildPersistedScore score acc =
+--     case score of
+--         StrengthBase val ->
+--             { acc | strengthBase = val }
+--         DexBase val ->
+--             { acc | dexBase = val }
+--         ConstBase val ->
+--             { acc | constBase = val }
+--         IntBase val ->
+--             { acc | intBase = val }
+--         WisBase val ->
+--             { acc | wisBase = val }
+--         CharBase val ->
+--             { acc | charBase = val }
 
 
 viewAbilityInput : AbilityScore -> Html msg
