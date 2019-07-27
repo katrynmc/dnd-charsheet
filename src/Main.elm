@@ -194,4 +194,5 @@ view model =
             ]
         , div []
             (List.map viewSkillInput model.skillScore)
+        , h2 [] [ text "Skills" ]
         ]
