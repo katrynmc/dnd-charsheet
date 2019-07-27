@@ -57,13 +57,36 @@ getAbilityLabel abilityScore =
             label
 
 
+getAbilityModifier : AbilityScore -> Int
+getAbilityModifier abilityScore =
+    case abilityScore of
+        StrengthBase _ val ->
+            0
+
+        DexBase _ val ->
+            0
+
+        ConstBase _ val ->
+            0
+
+        IntBase _ val ->
+            0
+
+        WisBase _ val ->
+            0
+
+        CharBase _ val ->
+            0
+
+
 viewAbilityInput : AbilityScore -> Html msg
-viewAbilityInput a =
+viewAbilityInput abilityScore =
     div []
-        [ label [] [ text (getAbilityLabel a) ]
+        [ label [] [ text (getAbilityLabel abilityScore) ]
         , input
             [ type_ "number"
-            , value (String.fromInt (getAbilityScore a))
+            , value (String.fromInt (getAbilityScore abilityScore))
             ]
             []
+        , div [] [ text (String.fromInt (getAbilityModifier abilityScore)) ]
         ]
