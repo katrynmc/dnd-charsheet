@@ -5,6 +5,7 @@ import Browser
 import Html exposing (Html, button, div, h1, h2, input, label, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
+import Maybe exposing (Maybe(..))
 import SkillScores exposing (SkillScore(..), viewSkillInput)
 
 
@@ -63,6 +64,13 @@ init =
 type Msg
     = Increment
     | Decrement
+    | UpdateCharacterName String
+    | UpdateClassAndLevel String
+    | UpdateBackground String
+    | UpdatePlayerName String
+    | UpdateRace String
+    | UpdateAlignment String
+    | UpdateExperiencePoints String
 
 
 update : Msg -> Model -> Model
@@ -73,6 +81,27 @@ update msg model =
 
         Decrement ->
             { model | tempNum = model.tempNum - 1 }
+
+        UpdateCharacterName charName ->
+            { model | characterName = charName }
+
+        UpdateClassAndLevel classAndLevel ->
+            { model | classAndLevel = classAndLevel }
+
+        UpdateBackground background ->
+            { model | background = background }
+
+        UpdatePlayerName playerName ->
+            { model | playerName = playerName }
+
+        UpdateRace race ->
+            { model | race = race }
+
+        UpdateAlignment alignment ->
+            { model | alignment = alignment }
+
+        UpdateExperiencePoints exPoints ->
+            { model | experiencePoints = Maybe.withDefault 0 (String.toInt exPoints) }
 
 
 view : Model -> Html Msg
@@ -85,6 +114,7 @@ view model =
                 , input
                     [ type_ "text"
                     , value model.characterName
+                    , onInput UpdateCharacterName
                     ]
                     []
                 ]
@@ -95,6 +125,7 @@ view model =
                 , input
                     [ type_ "text"
                     , value model.classAndLevel
+                    , onInput UpdateClassAndLevel
                     ]
                     []
                 ]
@@ -111,6 +142,7 @@ view model =
                 , input
                     [ type_ "text"
                     , value model.playerName
+                    , onInput UpdatePlayerName
                     ]
                     []
                 ]
@@ -119,6 +151,7 @@ view model =
                 , input
                     [ type_ "text"
                     , value model.race
+                    , onInput UpdateRace
                     ]
                     []
                 ]
@@ -127,6 +160,7 @@ view model =
                 , input
                     [ type_ "text"
                     , value model.alignment
+                    , onInput UpdateAlignment
                     ]
                     []
                 ]
@@ -135,6 +169,7 @@ view model =
                 , input
                     [ type_ "number"
                     , value (String.fromInt model.experiencePoints)
+                    , onInput UpdateExperiencePoints
                     ]
                     []
                 ]
