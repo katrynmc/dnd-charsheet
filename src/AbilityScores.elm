@@ -1,4 +1,4 @@
-module AbilityScores exposing (AbilityScore(..), toAbilityScore, viewAbilityInput)
+module AbilityScores exposing (AbilityScore(..), viewAbilityInput)
 
 import Html exposing (Html, div, input, label, text)
 import Html.Attributes exposing (..)
@@ -13,8 +13,8 @@ type AbilityScore
     | CharBase String Int
 
 
-toAbilityScore : AbilityScore -> Int
-toAbilityScore abilityScore =
+getAbilityScore : AbilityScore -> Int
+getAbilityScore abilityScore =
     case abilityScore of
         StrengthBase _ val ->
             val
@@ -35,8 +35,8 @@ toAbilityScore abilityScore =
             val
 
 
-toAbilityLabel : AbilityScore -> String
-toAbilityLabel abilityScore =
+getAbilityLabel : AbilityScore -> String
+getAbilityLabel abilityScore =
     case abilityScore of
         StrengthBase label _ ->
             label
@@ -60,10 +60,10 @@ toAbilityLabel abilityScore =
 viewAbilityInput : AbilityScore -> Html msg
 viewAbilityInput a =
     div []
-        [ label [] [ text (toAbilityLabel a) ]
+        [ label [] [ text (getAbilityLabel a) ]
         , input
             [ type_ "number"
-            , value (String.fromInt (toAbilityScore a))
+            , value (String.fromInt (getAbilityScore a))
             ]
             []
         ]
