@@ -7,7 +7,7 @@ import Html exposing (Html, button, div, h1, h2, input, label, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Maybe exposing (Maybe(..))
-import SkillScores exposing (SkillScore(..), viewSkillInput)
+import SkillScores exposing (SkillScore(..), replaceSkill, viewSkillInput)
 
 
 main =
@@ -75,6 +75,7 @@ type Msg
     = Increment
     | Decrement
     | UpdateAbility AbilityScore String
+    | UpdateSkill SkillScore String
 
 
 update : Msg -> CharacterModel -> CharacterModel
@@ -88,6 +89,9 @@ update msg model =
 
         UpdateAbility abilityScore newAbilityVal ->
             { model | abilityScore = List.map (replaceAbility newAbilityVal abilityScore) model.abilityScore }
+
+        UpdateSkill skillScore newSkillVal ->
+            { model | skillScore = List.map (replaceSkill newSkillVal skillScore) model.skillScore }
 
 
 view : CharacterModel -> Html Msg
@@ -150,6 +154,6 @@ view model =
             , h2 [] [ text "Saving Throws" ]
             ]
         , div []
-            (List.map viewSkillInput model.skillScore)
+            (List.map (viewSkillInput UpdateSkill) model.skillScore)
         , h2 [] [ text "Skills" ]
         ]

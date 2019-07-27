@@ -1,7 +1,8 @@
-module SkillScores exposing (SkillScore(..), viewSkillInput)
+module SkillScores exposing (SkillScore(..), replaceSkill, viewSkillInput)
 
 import Html exposing (Html, div, input, label, span, text)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
 
 
 type SkillScore
@@ -141,6 +142,82 @@ getSkillAbility skillScore =
             "Wis"
 
 
+mergeNewSkillValue : SkillScore -> String -> SkillScore
+mergeNewSkillValue skillScore newVal =
+    case skillScore of
+        Acrobatics isProficient _ ->
+            Acrobatics isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        AnimalHandling isProficient _ ->
+            AnimalHandling isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Arcana isProficient _ ->
+            Arcana isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Athletics isProficient _ ->
+            Athletics isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Deception isProficient _ ->
+            Deception isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        History isProficient _ ->
+            History isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Insight isProficient _ ->
+            Insight isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Intimidation isProficient _ ->
+            Intimidation isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Investigation isProficient _ ->
+            Investigation isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Medicine isProficient _ ->
+            Medicine isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Nature isProficient _ ->
+            Nature isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Perception isProficient _ ->
+            Perception isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Performance isProficient _ ->
+            Performance isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Persuasion isProficient _ ->
+            Persuasion isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Religion isProficient _ ->
+            Religion isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        SleightOfHand isProficient _ ->
+            SleightOfHand isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Stealth isProficient _ ->
+            Stealth isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+        Survival isProficient _ ->
+            Survival isProficient (Maybe.withDefault 0 (String.toInt newVal))
+
+
+isSameSkill : SkillScore -> SkillScore -> Bool
+isSameSkill newSkill oldSkill =
+    getSkillLabel newSkill == getSkillLabel oldSkill
+
+
+replaceSkill : String -> SkillScore -> SkillScore -> SkillScore
+replaceSkill newSkillVal oldSkillScore skillScore =
+    let
+        newSkillScore =
+            mergeNewSkillValue oldSkillScore newSkillVal
+    in
+    if isSameSkill newSkillScore skillScore then
+        newSkillScore
+
+    else
+        skillScore
+
+
 getSkillScore : SkillScore -> Int
 getSkillScore skillScore =
     case skillScore of
@@ -257,8 +334,8 @@ getProficiency skillScore =
             isProficient
 
 
-viewSkillInput : SkillScore -> Html msg
-viewSkillInput skillScore =
+viewSkillInput : (SkillScore -> String -> msg) -> SkillScore -> Html msg
+viewSkillInput updateSkill skillScore =
     div []
         [ input
             [ type_ "checkbox"
@@ -269,6 +346,7 @@ viewSkillInput skillScore =
         , input
             [ type_ "number"
             , value (String.fromInt (getSkillScore skillScore))
+            , onInput (updateSkill skillScore)
             ]
             []
         , span [] [ text ("(" ++ getSkillAbility skillScore ++ ")") ]
