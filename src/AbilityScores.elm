@@ -1,7 +1,8 @@
-module AbilityScores exposing (AbilityScore(..), viewAbilityInput)
+module AbilityScores exposing (AbilityScore(..), replaceAbility, viewAbilityInput)
 
 import Html exposing (Html, div, input, label, text)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
 
 
 type AbilityScore
@@ -11,17 +12,6 @@ type AbilityScore
     | IntBase Int
     | WisBase Int
     | CharBase Int
-
-
-
--- type alias PersistedAbilityScore =
---     { strengthBase : Int
---     , dexBase : Int
---     , constBase : Int
---     , intBase : Int
---     , wisBase : Int
---     , charBase : Int
---     }
 
 
 getAbilityScore : AbilityScore -> Int
@@ -68,66 +58,130 @@ getAbilityLabel abilityScore =
             "Charisma"
 
 
+calculateModifier : Int -> Int
+calculateModifier base =
+    if base == 1 then
+        -5
+
+    else if base > 1 && base < 4 then
+        -4
+
+    else if base > 3 && base < 6 then
+        -3
+
+    else if base > 5 && base < 8 then
+        -2
+
+    else if base > 7 && base < 10 then
+        -1
+
+    else if base > 9 && base < 12 then
+        0
+
+    else if base > 11 && base < 14 then
+        1
+
+    else if base > 13 && base < 16 then
+        2
+
+    else if base > 15 && base < 18 then
+        3
+
+    else if base > 17 && base < 20 then
+        4
+
+    else if base > 19 && base < 22 then
+        5
+
+    else if base > 21 && base < 24 then
+        6
+
+    else if base > 23 && base < 26 then
+        7
+
+    else if base > 25 && base < 28 then
+        8
+
+    else if base > 27 && base < 30 then
+        9
+
+    else if base > 29 then
+        10
+
+    else
+        0
+
+
 getAbilityModifier : AbilityScore -> Int
 getAbilityModifier abilityScore =
     case abilityScore of
         StrengthBase val ->
-            0
+            calculateModifier val
 
         DexBase val ->
-            0
+            calculateModifier val
 
         ConstBase val ->
-            0
+            calculateModifier val
 
         IntBase val ->
-            0
+            calculateModifier val
 
         WisBase val ->
-            0
+            calculateModifier val
 
         CharBase val ->
-            0
+            calculateModifier val
 
 
+wrapAbilityInput : AbilityScore -> String -> AbilityScore
+wrapAbilityInput abilityScore newVal =
+    case abilityScore of
+        StrengthBase _ ->
+            StrengthBase (Maybe.withDefault 0 (String.toInt newVal))
 
--- Todo implement parsing and persistance
--- defaultAbilityScore : PersistedAbilityScore
--- defaultAbilityScore =
---     { strengthBase = 0
---     , dexBase = 0
---     , constBase = 0
---     , intBase = 0
---     , wisBase = 0
---     , charBase = 0
---     }
--- parseAbilityScores : List AbilityScore -> PersistedAbilityScore
--- parseAbilityScores abilityScores =
---     List.foldl buildPersistedScore defaultAbilityScore abilityScores
--- buildPersistedScore : AbilityScore -> PersistedAbilityScore -> PersistedAbilityScore
--- buildPersistedScore score acc =
---     case score of
---         StrengthBase val ->
---             { acc | strengthBase = val }
---         DexBase val ->
---             { acc | dexBase = val }
---         ConstBase val ->
---             { acc | constBase = val }
---         IntBase val ->
---             { acc | intBase = val }
---         WisBase val ->
---             { acc | wisBase = val }
---         CharBase val ->
---             { acc | charBase = val }
+        DexBase _ ->
+            DexBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        ConstBase _ ->
+            ConstBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        IntBase _ ->
+            IntBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        WisBase _ ->
+            WisBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        CharBase _ ->
+            CharBase (Maybe.withDefault 0 (String.toInt newVal))
 
 
-viewAbilityInput : AbilityScore -> Html msg
-viewAbilityInput abilityScore =
+isSameAbility : AbilityScore -> AbilityScore -> Bool
+isSameAbility newAbility oldAbility =
+    getAbilityLabel newAbility == getAbilityLabel oldAbility
+
+
+replaceAbility : String -> AbilityScore -> AbilityScore -> AbilityScore
+replaceAbility newAbilityVal oldAbilityScore abilityScore =
+    let
+        newAbilityScore =
+            wrapAbilityInput oldAbilityScore newAbilityVal
+    in
+    if isSameAbility newAbilityScore abilityScore then
+        newAbilityScore
+
+    else
+        abilityScore
+
+
+viewAbilityInput : (AbilityScore -> String -> msg) -> AbilityScore -> Html msg
+viewAbilityInput updateAbility abilityScore =
     div []
         [ label [] [ text (getAbilityLabel abilityScore) ]
         , input
             [ type_ "number"
             , value (String.fromInt (getAbilityScore abilityScore))
+            , onInput (updateAbility abilityScore)
             ]
             []
         , div [] [ text (String.fromInt (getAbilityModifier abilityScore)) ]

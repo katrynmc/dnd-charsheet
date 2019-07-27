@@ -1,7 +1,8 @@
 module Main exposing (CharacterModel, Msg(..), init, main, update, view)
 
-import AbilityScores exposing (AbilityScore(..), viewAbilityInput)
+import AbilityScores exposing (AbilityScore(..), replaceAbility, viewAbilityInput)
 import Browser
+import CharacterSummaries exposing (CharacterSummary(..), viewCharacterSummary)
 import Html exposing (Html, button, div, h1, h2, input, label, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
@@ -21,6 +22,7 @@ type alias CharacterModel =
     , race : String
     , alignment : String
     , experiencePoints : Int
+    , characterSummary : List CharacterSummary
     , abilityScore : List AbilityScore
     , skillScore : List SkillScore
     , tempNum : Int
@@ -36,7 +38,15 @@ init =
     , race = ""
     , alignment = ""
     , experiencePoints = 0
-    , abilityScore = [ StrengthBase 0, DexBase 0, ConstBase 0, IntBase 0, WisBase 0, CharBase 0 ]
+    , characterSummary = [ CharacterName "", ClassAndLevel "", Background "", PlayerName "", Race "", Alignment "", ExperiencePoints 0 ]
+    , abilityScore =
+        [ StrengthBase 0
+        , DexBase 0
+        , ConstBase 0
+        , IntBase 0
+        , WisBase 0
+        , CharBase 0
+        ]
     , skillScore =
         [ Acrobatics False 0
         , AnimalHandling False 0
@@ -64,28 +74,7 @@ init =
 type Msg
     = Increment
     | Decrement
-    | UpdateCharacterName String
-    | UpdateClassAndLevel String
-    | UpdateBackground String
-    | UpdatePlayerName String
-    | UpdateRace String
-    | UpdateAlignment String
-    | UpdateExperiencePoints String
-
-
-
--- Todo implement storage
--- updateWithStorage : Msg -> CharacterModel -> ( CharacterModel, Cmd Msg )
--- updateWithStorage msg characterModel =
---     let
---         ( newModel, commands ) =
---             update msg CharacterModel
---         parsedModel =
---             { newModel | abilityScore = parseAbilityScores newModel.abilityScore }
---     in
---     ( newModel
---     , Cmd.batch [ commands, storeCharacter parsedModel ]
---     )
+    | UpdateAbility AbilityScore String
 
 
 update : Msg -> CharacterModel -> CharacterModel
@@ -97,26 +86,8 @@ update msg model =
         Decrement ->
             { model | tempNum = model.tempNum - 1 }
 
-        UpdateCharacterName charName ->
-            { model | characterName = charName }
-
-        UpdateClassAndLevel classAndLevel ->
-            { model | classAndLevel = classAndLevel }
-
-        UpdateBackground background ->
-            { model | background = background }
-
-        UpdatePlayerName playerName ->
-            { model | playerName = playerName }
-
-        UpdateRace race ->
-            { model | race = race }
-
-        UpdateAlignment alignment ->
-            { model | alignment = alignment }
-
-        UpdateExperiencePoints exPoints ->
-            { model | experiencePoints = Maybe.withDefault 0 (String.toInt exPoints) }
+        UpdateAbility abilityScore newAbilityVal ->
+            { model | abilityScore = List.map (replaceAbility newAbilityVal abilityScore) model.abilityScore }
 
 
 view : CharacterModel -> Html Msg
@@ -124,73 +95,9 @@ view model =
     div []
         [ h1 [] [ text "Dungeons & Dragons" ]
         , div []
-            [ div []
-                [ label [] [ text "Character Name" ]
-                , input
-                    [ type_ "text"
-                    , value model.characterName
-                    , onInput UpdateCharacterName
-                    ]
-                    []
-                ]
-            ]
+            (List.map viewCharacterSummary model.characterSummary)
         , div []
-            [ div []
-                [ label [] [ text "Class & Level" ]
-                , input
-                    [ type_ "text"
-                    , value model.classAndLevel
-                    , onInput UpdateClassAndLevel
-                    ]
-                    []
-                ]
-            , div []
-                [ label [] [ text "Background" ]
-                , input
-                    [ type_ "text"
-                    , value model.background
-                    ]
-                    []
-                ]
-            , div []
-                [ label [] [ text "Player Name" ]
-                , input
-                    [ type_ "text"
-                    , value model.playerName
-                    , onInput UpdatePlayerName
-                    ]
-                    []
-                ]
-            , div []
-                [ label [] [ text "Race" ]
-                , input
-                    [ type_ "text"
-                    , value model.race
-                    , onInput UpdateRace
-                    ]
-                    []
-                ]
-            , div []
-                [ label [] [ text "Alignment" ]
-                , input
-                    [ type_ "text"
-                    , value model.alignment
-                    , onInput UpdateAlignment
-                    ]
-                    []
-                ]
-            , div []
-                [ label [] [ text "Experience Points" ]
-                , input
-                    [ type_ "number"
-                    , value (String.fromInt model.experiencePoints)
-                    , onInput UpdateExperiencePoints
-                    ]
-                    []
-                ]
-            ]
-        , div []
-            (List.map viewAbilityInput model.abilityScore)
+            (List.map (viewAbilityInput UpdateAbility) model.abilityScore)
         , div []
             [ div [] [ text "Inspiration" ]
             , button [ onClick Decrement ] [ text "-" ]
