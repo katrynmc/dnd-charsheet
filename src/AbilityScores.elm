@@ -5,77 +5,78 @@ import Html.Attributes exposing (..)
 
 
 type AbilityScore
-    = StrengthBase String Int
-    | DexBase String Int
-    | ConstBase String Int
-    | IntBase String Int
-    | WisBase String Int
-    | CharBase String Int
+    = StrengthBase Int
+    | DexBase Int
+    | ConstBase Int
+    | IntBase Int
+    | WisBase Int
+    | CharBase Int
+
 
 
 getAbilityScore : AbilityScore -> Int
 getAbilityScore abilityScore =
     case abilityScore of
-        StrengthBase _ val ->
+        StrengthBase val ->
             val
 
-        DexBase _ val ->
+        DexBase val ->
             val
 
-        ConstBase _ val ->
+        ConstBase val ->
             val
 
-        IntBase _ val ->
+        IntBase val ->
             val
 
-        WisBase _ val ->
+        WisBase val ->
             val
 
-        CharBase _ val ->
+        CharBase val ->
             val
 
 
 getAbilityLabel : AbilityScore -> String
 getAbilityLabel abilityScore =
     case abilityScore of
-        StrengthBase label _ ->
-            label
+        StrengthBase _ ->
+            "Strength"
 
-        DexBase label _ ->
-            label
+        DexBase _ ->
+            "Dexterity"
 
-        ConstBase label _ ->
-            label
+        ConstBase _ ->
+            "Constitution"
 
-        IntBase label _ ->
-            label
+        IntBase _ ->
+            "Intelligence"
 
-        WisBase label _ ->
-            label
+        WisBase _ ->
+            "Wisdom"
 
-        CharBase label _ ->
-            label
+        CharBase _ ->
+            "Charisma"
 
 
 getAbilityModifier : AbilityScore -> Int
 getAbilityModifier abilityScore =
     case abilityScore of
-        StrengthBase _ val ->
+        StrengthBase val ->
             0
 
-        DexBase _ val ->
+        DexBase val ->
             0
 
-        ConstBase _ val ->
+        ConstBase val ->
             0
 
-        IntBase _ val ->
+        IntBase val ->
             0
 
-        WisBase _ val ->
+        WisBase val ->
             0
 
-        CharBase _ val ->
+        CharBase val ->
             0
 
 

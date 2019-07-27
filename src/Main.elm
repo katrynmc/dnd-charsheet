@@ -36,7 +36,7 @@ init =
     , race = ""
     , alignment = ""
     , experiencePoints = 0
-    , abilityScore = [ StrengthBase "Strength Base" 0, DexBase "Dexterity Base" 0, ConstBase "Constitution Base" 0, IntBase "Intelligence Base" 0, WisBase "Wisdom Base" 0, CharBase "Charisma Base" 0 ]
+    , abilityScore = [ StrengthBase 0, DexBase 0, ConstBase 0, IntBase 0, WisBase 0, CharBase 0 ]
     , skillScore =
         [ Acrobatics False 0
         , AnimalHandling False 0
