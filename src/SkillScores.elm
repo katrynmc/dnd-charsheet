@@ -1,6 +1,6 @@
 module SkillScores exposing (SkillScore(..), viewSkillInput)
 
-import Html exposing (Html, div, input, label, text)
+import Html exposing (Html, div, input, label, span, text)
 import Html.Attributes exposing (..)
 
 
@@ -83,6 +83,64 @@ getSkillLabel skillScore =
             "Survival"
 
 
+getSkillAbility : SkillScore -> String
+getSkillAbility skillScore =
+    case skillScore of
+        Acrobatics _ _ ->
+            "Dex"
+
+        AnimalHandling _ _ ->
+            "Wis"
+
+        Arcana _ _ ->
+            "Int"
+
+        Athletics _ _ ->
+            "Str"
+
+        Deception _ _ ->
+            "Cha"
+
+        History _ _ ->
+            "Int"
+
+        Insight _ _ ->
+            "Wis"
+
+        Intimidation _ _ ->
+            "Cha"
+
+        Investigation _ _ ->
+            "Int"
+
+        Medicine _ _ ->
+            "Wis"
+
+        Nature _ _ ->
+            "Int"
+
+        Perception _ _ ->
+            "Wis"
+
+        Performance _ _ ->
+            "Cha"
+
+        Persuasion _ _ ->
+            "Cha"
+
+        Religion _ _ ->
+            "Int"
+
+        SleightOfHand _ _ ->
+            "Dex"
+
+        Stealth _ _ ->
+            "Dex"
+
+        Survival _ _ ->
+            "Wis"
+
+
 getSkillScore : SkillScore -> Int
 getSkillScore skillScore =
     case skillScore of
@@ -141,13 +199,77 @@ getSkillScore skillScore =
             score
 
 
+getProficiency : SkillScore -> Bool
+getProficiency skillScore =
+    case skillScore of
+        Acrobatics isProficient _ ->
+            isProficient
+
+        AnimalHandling isProficient _ ->
+            isProficient
+
+        Arcana isProficient _ ->
+            isProficient
+
+        Athletics isProficient _ ->
+            isProficient
+
+        Deception isProficient _ ->
+            isProficient
+
+        History isProficient _ ->
+            isProficient
+
+        Insight isProficient _ ->
+            isProficient
+
+        Intimidation isProficient _ ->
+            isProficient
+
+        Investigation isProficient _ ->
+            isProficient
+
+        Medicine isProficient _ ->
+            isProficient
+
+        Nature isProficient _ ->
+            isProficient
+
+        Perception isProficient _ ->
+            isProficient
+
+        Performance isProficient _ ->
+            isProficient
+
+        Persuasion isProficient _ ->
+            isProficient
+
+        Religion isProficient _ ->
+            isProficient
+
+        SleightOfHand isProficient _ ->
+            isProficient
+
+        Stealth isProficient _ ->
+            isProficient
+
+        Survival isProficient _ ->
+            isProficient
+
+
 viewSkillInput : SkillScore -> Html msg
 viewSkillInput skillScore =
     div []
-        [ label [] [ text (getSkillLabel skillScore) ]
+        [ input
+            [ type_ "checkbox"
+            , checked (getProficiency skillScore)
+            ]
+            []
+        , label [] [ text (getSkillLabel skillScore) ]
         , input
             [ type_ "number"
             , value (String.fromInt (getSkillScore skillScore))
             ]
             []
+        , span [] [ text ("(" ++ getSkillAbility skillScore ++ ")") ]
         ]
