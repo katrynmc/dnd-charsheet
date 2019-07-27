@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), init, main, update, view)
+module Main exposing (CharacterModel, Msg(..), init, main, update, view)
 
 import AbilityScores exposing (AbilityScore(..), viewAbilityInput)
 import Browser
@@ -13,7 +13,7 @@ main =
     Browser.sandbox { init = init, update = update, view = view }
 
 
-type alias Model =
+type alias CharacterModel =
     { characterName : String
     , classAndLevel : String
     , background : String
@@ -27,7 +27,7 @@ type alias Model =
     }
 
 
-init : Model
+init : CharacterModel
 init =
     { characterName = ""
     , classAndLevel = ""
@@ -73,7 +73,8 @@ type Msg
     | UpdateExperiencePoints String
 
 
-update : Msg -> Model -> Model
+
+update : Msg -> CharacterModel -> CharacterModel
 update msg model =
     case msg of
         Increment ->
@@ -104,7 +105,7 @@ update msg model =
             { model | experiencePoints = Maybe.withDefault 0 (String.toInt exPoints) }
 
 
-view : Model -> Html Msg
+view : CharacterModel -> Html Msg
 view model =
     div []
         [ h1 [] [ text "Dungeons & Dragons" ]
