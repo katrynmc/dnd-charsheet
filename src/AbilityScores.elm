@@ -1,91 +1,187 @@
-module AbilityScores exposing (AbilityScore(..), viewAbilityInput)
+module AbilityScores exposing (AbilityScore(..), replaceAbility, viewAbilityInput)
 
 import Html exposing (Html, div, input, label, text)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
 
 
 type AbilityScore
-    = StrengthBase String Int
-    | DexBase String Int
-    | ConstBase String Int
-    | IntBase String Int
-    | WisBase String Int
-    | CharBase String Int
+    = StrengthBase Int
+    | DexBase Int
+    | ConstBase Int
+    | IntBase Int
+    | WisBase Int
+    | CharBase Int
 
 
 getAbilityScore : AbilityScore -> Int
 getAbilityScore abilityScore =
     case abilityScore of
-        StrengthBase _ val ->
+        StrengthBase val ->
             val
 
-        DexBase _ val ->
+        DexBase val ->
             val
 
-        ConstBase _ val ->
+        ConstBase val ->
             val
 
-        IntBase _ val ->
+        IntBase val ->
             val
 
-        WisBase _ val ->
+        WisBase val ->
             val
 
-        CharBase _ val ->
+        CharBase val ->
             val
 
 
 getAbilityLabel : AbilityScore -> String
 getAbilityLabel abilityScore =
     case abilityScore of
-        StrengthBase label _ ->
-            label
+        StrengthBase _ ->
+            "Strength"
 
-        DexBase label _ ->
-            label
+        DexBase _ ->
+            "Dexterity"
 
-        ConstBase label _ ->
-            label
+        ConstBase _ ->
+            "Constitution"
 
-        IntBase label _ ->
-            label
+        IntBase _ ->
+            "Intelligence"
 
-        WisBase label _ ->
-            label
+        WisBase _ ->
+            "Wisdom"
 
-        CharBase label _ ->
-            label
+        CharBase _ ->
+            "Charisma"
+
+
+calculateModifier : Int -> Int
+calculateModifier base =
+    if base == 1 then
+        -5
+
+    else if base > 1 && base < 4 then
+        -4
+
+    else if base > 3 && base < 6 then
+        -3
+
+    else if base > 5 && base < 8 then
+        -2
+
+    else if base > 7 && base < 10 then
+        -1
+
+    else if base > 9 && base < 12 then
+        0
+
+    else if base > 11 && base < 14 then
+        1
+
+    else if base > 13 && base < 16 then
+        2
+
+    else if base > 15 && base < 18 then
+        3
+
+    else if base > 17 && base < 20 then
+        4
+
+    else if base > 19 && base < 22 then
+        5
+
+    else if base > 21 && base < 24 then
+        6
+
+    else if base > 23 && base < 26 then
+        7
+
+    else if base > 25 && base < 28 then
+        8
+
+    else if base > 27 && base < 30 then
+        9
+
+    else if base > 29 then
+        10
+
+    else
+        0
 
 
 getAbilityModifier : AbilityScore -> Int
 getAbilityModifier abilityScore =
     case abilityScore of
-        StrengthBase _ val ->
-            0
+        StrengthBase val ->
+            calculateModifier val
 
-        DexBase _ val ->
-            0
+        DexBase val ->
+            calculateModifier val
 
-        ConstBase _ val ->
-            0
+        ConstBase val ->
+            calculateModifier val
 
-        IntBase _ val ->
-            0
+        IntBase val ->
+            calculateModifier val
 
-        WisBase _ val ->
-            0
+        WisBase val ->
+            calculateModifier val
 
-        CharBase _ val ->
-            0
+        CharBase val ->
+            calculateModifier val
 
 
-viewAbilityInput : AbilityScore -> Html msg
-viewAbilityInput abilityScore =
+wrapAbilityInput : AbilityScore -> String -> AbilityScore
+wrapAbilityInput abilityScore newVal =
+    case abilityScore of
+        StrengthBase _ ->
+            StrengthBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        DexBase _ ->
+            DexBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        ConstBase _ ->
+            ConstBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        IntBase _ ->
+            IntBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        WisBase _ ->
+            WisBase (Maybe.withDefault 0 (String.toInt newVal))
+
+        CharBase _ ->
+            CharBase (Maybe.withDefault 0 (String.toInt newVal))
+
+
+isSameAbility : AbilityScore -> AbilityScore -> Bool
+isSameAbility newAbility oldAbility =
+    getAbilityLabel newAbility == getAbilityLabel oldAbility
+
+
+replaceAbility : String -> AbilityScore -> AbilityScore -> AbilityScore
+replaceAbility newAbilityVal oldAbilityScore abilityScore =
+    let
+        newAbilityScore =
+            wrapAbilityInput oldAbilityScore newAbilityVal
+    in
+    if isSameAbility newAbilityScore abilityScore then
+        newAbilityScore
+
+    else
+        abilityScore
+
+
+viewAbilityInput : (AbilityScore -> String -> msg) -> AbilityScore -> Html msg
+viewAbilityInput updateAbility abilityScore =
     div []
         [ label [] [ text (getAbilityLabel abilityScore) ]
         , input
             [ type_ "number"
             , value (String.fromInt (getAbilityScore abilityScore))
+            , onInput (updateAbility abilityScore)
             ]
             []
         , div [] [ text (String.fromInt (getAbilityModifier abilityScore)) ]
