@@ -1,8 +1,11 @@
 module CharacterSummaries exposing (CharacterSummary(..), viewCharacterSummary)
 
-import Html exposing (Html, div, input, label, text)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Css exposing (..)
+import Html
+import Html.Styled exposing (Html, div, input, label, text)
+import Html.Styled.Attributes exposing (..)
+import Html.Styled.Events exposing (onInput)
+import Styles exposing (theme)
 
 
 type CharacterSummary
@@ -93,9 +96,20 @@ updateCharacterSummary newVal characterSummary =
 viewCharacterSummary : CharacterSummary -> Html msg
 viewCharacterSummary characterSummary =
     div []
-        [ label [] [ text (getSummaryLabel characterSummary) ]
+        [ label
+            [ css
+                [ display inlineBlock
+                , Css.width (px theme.labelWidth)
+                , marginBottom (px (theme.gridBase * 0.5))
+                ]
+            ]
+            [ text (getSummaryLabel characterSummary) ]
         , input
             [ type_ "text"
+            , css
+                [ border unset
+                , boxShadow none
+                ]
             , value (getSummaryValue characterSummary)
             ]
             []
