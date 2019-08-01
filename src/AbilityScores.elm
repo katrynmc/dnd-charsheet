@@ -1,8 +1,11 @@
-module AbilityScores exposing (AbilityScore(..), replaceAbility, viewAbilityInput)
+module AbilityScores exposing (AbilityScore(..), getAbilityLabel, replaceAbility, viewAbilityInput)
 
-import Html exposing (Html, div, input, label, text)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Css exposing (..)
+import Html
+import Html.Styled exposing (Html, div, input, label, text)
+import Html.Styled.Attributes exposing (css, for, id, name, type_, value)
+import Html.Styled.Events exposing (onInput)
+import Styles exposing (theme)
 
 
 type AbilityScore
@@ -176,10 +179,40 @@ replaceAbility newAbilityVal oldAbilityScore abilityScore =
 
 viewAbilityInput : (AbilityScore -> String -> msg) -> AbilityScore -> Html msg
 viewAbilityInput updateAbility abilityScore =
-    div []
-        [ label [] [ text (getAbilityLabel abilityScore) ]
+    div
+        [ css
+            [ displayFlex
+            , flexDirection column
+            , alignItems center
+            , border3 (px 1) solid (rgb 120 120 120)
+            , borderRadius (px theme.borderRadius)
+            , padding (px (theme.gridBase * 0.5))
+            , marginTop (px (theme.gridBase * 0.5))
+            , marginBottom (px theme.gridBase)
+            , width (px (theme.gridBase * 10))
+            ]
+        ]
+        [ label
+            [ for (getAbilityLabel abilityScore)
+            , css
+                [ marginBottom (px theme.gridBase)
+                ]
+            ]
+            [ text (getAbilityLabel abilityScore) ]
         , input
             [ type_ "number"
+            , css
+                [ border unset
+                , boxShadow none
+                , fontSize (rem theme.font.size.med)
+                , lineHeight (rem theme.lineHeight.med)
+                , paddingLeft (px (theme.gridBase * 1.5))
+                , textAlign center
+                , width (px theme.inputWidth.med)
+                , marginBottom (px theme.gridBase)
+                ]
+            , name (getAbilityLabel abilityScore)
+            , id (getAbilityLabel abilityScore)
             , value (String.fromInt (getAbilityScore abilityScore))
             , onInput (updateAbility abilityScore)
             ]

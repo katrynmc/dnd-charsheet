@@ -1,8 +1,11 @@
 module SkillScores exposing (SkillScore(..), replaceSkillWithNewProficiency, replaceSkillWithNewValue, viewSkillInput)
 
-import Html exposing (Html, div, input, label, span, text)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onCheck, onInput)
+import Css exposing (..)
+import Html
+import Html.Styled exposing (Html, div, input, label, span, text)
+import Html.Styled.Attributes exposing (checked, css, for, id, name, type_, value)
+import Html.Styled.Events exposing (onCheck, onInput)
+import Styles exposing (theme)
 
 
 type SkillScore
@@ -405,21 +408,53 @@ getProficiency skillScore =
             isProficient
 
 
+viewSkillCheckbox : (SkillScore -> Bool -> msg) -> SkillScore -> Html msg
+viewSkillCheckbox updateSkillProficiency skillScore =
+    input
+        [ type_ "checkbox"
+        , checked (getProficiency skillScore)
+        , onCheck (updateSkillProficiency skillScore)
+        ]
+        []
+
+
 viewSkillInput : (SkillScore -> String -> msg) -> (SkillScore -> Bool -> msg) -> SkillScore -> Html msg
 viewSkillInput updateSkillValue updateSkillProficiency skillScore =
-    div []
-        [ div []
-            [ input
-                [ type_ "checkbox"
-                , checked (getProficiency skillScore)
-                , onCheck (updateSkillProficiency skillScore)
-                ]
-                []
+    div
+        [ css
+            [ displayFlex
+            , marginBottom (px (theme.gridBase * 0.5))
             ]
-        , div []
-            [ label [] [ text (getSkillLabel skillScore) ]
+        ]
+        [ div
+            [ css
+                [ paddingRight (px (theme.gridBase * 0.5))
+                ]
+            ]
+            [ viewSkillCheckbox updateSkillProficiency skillScore
+            ]
+        , div
+            [ css
+                [ marginRight (px theme.gridBase)
+                ]
+            ]
+            [ label
+                [ for (getSkillLabel skillScore)
+                , css
+                    [ display inlineBlock
+                    , width (px theme.labelWidth)
+                    ]
+                ]
+                [ text (getSkillLabel skillScore) ]
             , input
                 [ type_ "number"
+                , css
+                    [ border unset
+                    , boxShadow none
+                    , width (px theme.inputWidth.small)
+                    ]
+                , name (getSkillLabel skillScore)
+                , id (getSkillLabel skillScore)
                 , value (String.fromInt (getSkillScore skillScore))
                 , onInput (updateSkillValue skillScore)
                 ]
