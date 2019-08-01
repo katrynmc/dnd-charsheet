@@ -95,16 +95,8 @@ updateCharacterSummary newVal characterSummary =
 
 viewCharacterSummary : CharacterSummary -> Html msg
 viewCharacterSummary characterSummary =
-    div []
-        [ label
-            [ css
-                [ display inlineBlock
-                , Css.width (px theme.labelWidth)
-                , marginBottom (px (theme.gridBase * 0.5))
-                ]
-            ]
-            [ text (getSummaryLabel characterSummary) ]
-        , input
+    div [ css [ displayFlex, flexDirection column, marginRight (px theme.gridBase) ] ]
+        [ input
             [ type_ "text"
             , css
                 [ border unset
@@ -113,4 +105,11 @@ viewCharacterSummary characterSummary =
             , value (getSummaryValue characterSummary)
             ]
             []
+        , label
+            [ css
+                [ display inlineBlock
+                , marginTop (px (theme.gridBase * 0.5))
+                ]
+            ]
+            [ text (getSummaryLabel characterSummary) ]
         ]

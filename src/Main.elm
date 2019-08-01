@@ -129,9 +129,9 @@ view : CharacterModel -> Html Msg
 view model =
     toUnstyled
         (form
-            [ css [ fontFamilies [ "Helvetica", "sans-serif" ], backgroundColor theme.secondary, color theme.primary, borderRadius (px theme.borderRadius), padding (px theme.gridBase) ] ]
+            [ css [ fontFamilies [ "Helvetica", "sans-serif" ], backgroundColor theme.secondary, color theme.primary, borderRadius (px theme.borderRadius), padding (px theme.gridBase), width (pct 100) ] ]
             [ h1 [] [ text "Dungeons & Dragons" ]
-            , div []
+            , div [ css [ displayFlex, flexWrap wrap ] ]
                 (List.map viewCharacterSummary model.characterSummary)
             , div [ css [ displayFlex ] ]
                 [ div []
