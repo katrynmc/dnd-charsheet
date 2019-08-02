@@ -1,6 +1,6 @@
 module Main exposing (Msg(..), init, main, update, view)
 
-import AbilityScores exposing (AbilityScore(..), replaceAbilityWithNewProficiency, replaceAbilityWithNewValue, viewAbilityInput)
+import AbilityScores exposing (AbilityScore(..), getAbilityModifier, replaceAbilityWithNewProficiency, replaceAbilityWithNewValue, viewAbilityInput)
 import Browser
 import CharacterSummaries exposing (CharacterSummary(..), viewCharacterSummary)
 import Css exposing (..)
@@ -27,9 +27,7 @@ init _ =
 
 
 type Msg
-    = Increment
-    | Decrement
-    | UpdateAbility AbilityScore String
+    = UpdateAbility AbilityScore String
     | UpdateSavingThrowProficiency AbilityScore Bool
     | UpdateSkillValue SkillScore String
     | UpdateSkillProficiency SkillScore Bool
@@ -40,12 +38,6 @@ type Msg
 update : Msg -> CharacterModel -> ( CharacterModel, Cmd Msg )
 update msg model =
     case msg of
-        Increment ->
-            ( { model | tempNum = model.tempNum + 1 }, Cmd.none )
-
-        Decrement ->
-            ( { model | tempNum = model.tempNum - 1 }, Cmd.none )
-
         UpdateAbility abilityScore newAbilityVal ->
             ( { model | abilityScore = List.map (replaceAbilityWithNewValue newAbilityVal abilityScore) model.abilityScore }, Cmd.none )
 
@@ -79,5 +71,25 @@ view model =
             , div [ css [ displayFlex, flexWrap wrap ] ]
                 (List.map viewCharacterSummary model.characterSummary)
             , viewSkillAndAbilityStats UpdateAbility UpdateSavingThrowProficiency UpdateSkillValue UpdateSkillProficiency UpdateProficiencyBonus UpdateInspiration model
+            , div
+                [ css
+                    [ border3 (px 1) solid (rgb 120 120 120)
+                    , borderRadius (px theme.borderRadius)
+                    , margin (px (theme.gridBase * 0.5))
+                    , padding (px theme.gridBase)
+                    ]
+                ]
+                [ input
+                    [ type_ "number"
+                    , css
+                        [ width (px theme.inputWidth.small)
+                        ]
+                    , name "passive-wisdom"
+                    , id "passive-wisdom"
+                    , value (String.fromInt 0)
+                    ]
+                    []
+                , label [ for "passive-wisdom" ] [ text "Passive Wisdom (Perception)" ]
+                ]
             ]
         )
