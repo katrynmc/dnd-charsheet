@@ -1,4 +1,4 @@
-module AbilityScores exposing (AbilityScore(..), getAbilityLabel, replaceAbility, viewAbilityInput)
+module AbilityScores exposing (AbilityScore(..), getAbilityLabel, getAbilityModifier, getSavingThrowProficiency, replaceAbilityWithNewProficiency, replaceAbilityWithNewValue, updateSavingProficiency, viewAbilityInput)
 
 import Css exposing (..)
 import Html
@@ -9,55 +9,77 @@ import Styles exposing (theme)
 
 
 type AbilityScore
-    = StrengthBase Int
-    | DexBase Int
-    | ConstBase Int
-    | IntBase Int
-    | WisBase Int
-    | CharBase Int
+    = StrengthBase Int Bool
+    | DexBase Int Bool
+    | ConstBase Int Bool
+    | IntBase Int Bool
+    | WisBase Int Bool
+    | CharBase Int Bool
 
 
 getAbilityScore : AbilityScore -> Int
 getAbilityScore abilityScore =
     case abilityScore of
-        StrengthBase val ->
+        StrengthBase val _ ->
             val
 
-        DexBase val ->
+        DexBase val _ ->
             val
 
-        ConstBase val ->
+        ConstBase val _ ->
             val
 
-        IntBase val ->
+        IntBase val _ ->
             val
 
-        WisBase val ->
+        WisBase val _ ->
             val
 
-        CharBase val ->
+        CharBase val _ ->
             val
+
+
+getSavingThrowProficiency : AbilityScore -> Bool
+getSavingThrowProficiency abilityScore =
+    case abilityScore of
+        StrengthBase _ isProficientInSaves ->
+            isProficientInSaves
+
+        DexBase _ isProficientInSaves ->
+            isProficientInSaves
+
+        ConstBase _ isProficientInSaves ->
+            isProficientInSaves
+
+        IntBase _ isProficientInSaves ->
+            isProficientInSaves
+
+        WisBase _ isProficientInSaves ->
+            isProficientInSaves
+
+        CharBase _ isProficientInSaves ->
+            isProficientInSaves
 
 
 getAbilityLabel : AbilityScore -> String
 getAbilityLabel abilityScore =
     case abilityScore of
-        StrengthBase _ ->
+        StrengthBase _ _ ->
             "Strength"
 
-        DexBase _ ->
+        DexBase _ _ ->
             "Dexterity"
 
-        ConstBase _ ->
+        ConstBase _ _ ->
             "Constitution"
 
-        IntBase _ ->
+        IntBase _ _ ->
             "Intelligence"
 
-        WisBase _ ->
+        WisBase _ _ ->
             "Wisdom"
 
-        CharBase _ ->
+        CharBase _ _ ->
             "Charisma"
 
 
@@ -118,45 +140,67 @@ calculateModifier base =
 getAbilityModifier : AbilityScore -> Int
 getAbilityModifier abilityScore =
     case abilityScore of
-        StrengthBase val ->
+        StrengthBase val _ ->
             calculateModifier val
 
-        DexBase val ->
+        DexBase val _ ->
             calculateModifier val
 
-        ConstBase val ->
+        ConstBase val _ ->
             calculateModifier val
 
-        IntBase val ->
+        IntBase val _ ->
             calculateModifier val
 
-        WisBase val ->
+        WisBase val _ ->
             calculateModifier val
 
-        CharBase val ->
+        CharBase val _ ->
             calculateModifier val
 
 
-wrapAbilityInput : AbilityScore -> String -> AbilityScore
-wrapAbilityInput abilityScore newVal =
+updateAbilityScore : AbilityScore -> String -> AbilityScore
+updateAbilityScore abilityScore newVal =
     case abilityScore of
-        StrengthBase _ ->
-            StrengthBase (Maybe.withDefault 0 (String.toInt newVal))
+        StrengthBase _ isProficientInSaves ->
+            StrengthBase (Maybe.withDefault 0 (String.toInt newVal)) isProficientInSaves
 
-        DexBase _ ->
-            DexBase (Maybe.withDefault 0 (String.toInt newVal))
+        DexBase _ isProficientInSaves ->
+            DexBase (Maybe.withDefault 0 (String.toInt newVal)) isProficientInSaves
 
-        ConstBase _ ->
-            ConstBase (Maybe.withDefault 0 (String.toInt newVal))
+        ConstBase _ isProficientInSaves ->
+            ConstBase (Maybe.withDefault 0 (String.toInt newVal)) isProficientInSaves
 
-        IntBase _ ->
-            IntBase (Maybe.withDefault 0 (String.toInt newVal))
+        IntBase _ isProficientInSaves ->
+            IntBase (Maybe.withDefault 0 (String.toInt newVal)) isProficientInSaves
 
-        WisBase _ ->
-            WisBase (Maybe.withDefault 0 (String.toInt newVal))
+        WisBase _ isProficientInSaves ->
+            WisBase (Maybe.withDefault 0 (String.toInt newVal)) isProficientInSaves
 
-        CharBase _ ->
-            CharBase (Maybe.withDefault 0 (String.toInt newVal))
+        CharBase _ isProficientInSaves ->
+            CharBase (Maybe.withDefault 0 (String.toInt newVal)) isProficientInSaves
+
+
+updateSavingProficiency : AbilityScore -> Bool -> AbilityScore
+updateSavingProficiency abilityScore isProficientInSaves =
+    case abilityScore of
+        StrengthBase val _ ->
+            StrengthBase val isProficientInSaves
+
+        DexBase val _ ->
+            DexBase val isProficientInSaves
+
+        ConstBase val _ ->
+            ConstBase val isProficientInSaves
+
+        IntBase val _ ->
+            IntBase val isProficientInSaves
+
+        WisBase val _ ->
+            WisBase val isProficientInSaves
+
+        CharBase val _ ->
+            CharBase val isProficientInSaves
 
 
 isSameAbility : AbilityScore -> AbilityScore -> Bool
@@ -164,11 +208,24 @@ isSameAbility newAbility oldAbility =
     getAbilityLabel newAbility == getAbilityLabel oldAbility
 
 
-replaceAbility : String -> AbilityScore -> AbilityScore -> AbilityScore
-replaceAbility newAbilityVal oldAbilityScore abilityScore =
+replaceAbilityWithNewValue : String -> AbilityScore -> AbilityScore -> AbilityScore
+replaceAbilityWithNewValue newAbilityVal oldAbilityScore abilityScore =
     let
         newAbilityScore =
-            wrapAbilityInput oldAbilityScore newAbilityVal
+            updateAbilityScore oldAbilityScore newAbilityVal
+    in
+    if isSameAbility newAbilityScore abilityScore then
+        newAbilityScore
+
+    else
+        abilityScore
+
+
+replaceAbilityWithNewProficiency : Bool -> AbilityScore -> AbilityScore -> AbilityScore
+replaceAbilityWithNewProficiency newAbilityProficiency oldAbilityScore abilityScore =
+    let
+        newAbilityScore =
+            updateSavingProficiency oldAbilityScore newAbilityProficiency
     in
     if isSameAbility newAbilityScore abilityScore then
         newAbilityScore
