@@ -10,5 +10,6 @@ elm install
 ```
 
 ```
+cd client
 elm reactor
 ```
